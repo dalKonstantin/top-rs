@@ -13,8 +13,8 @@ impl MemInfo {
         m.parse();
         m
     }
-    fn parse(&mut self) {
-        let content = match fs::read_to_string("out.txt") {
+    pub fn parse(&mut self) {
+        let content = match fs::read_to_string("/proc/meminfo") {
             Ok(data) => data,
             Err(_) => String::new(),
         };
@@ -33,6 +33,18 @@ impl MemInfo {
                     _ => {}
                 }
             }
+        }
+    }
+
+    pub fn used_kb(&self) -> u64 {
+        self.total_kb.saturating_sub(self.available_kb)
+    }
+
+    pub fn used_percent(&self) -> f32 {
+        if self.total_kb == 0 {
+            0.0
+        } else {
+            (self.used_kb() as f32 / self.total_kb as f32) * 100.0
         }
     }
 }

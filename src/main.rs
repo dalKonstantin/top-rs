@@ -1,6 +1,8 @@
 mod app;
 mod proc;
 use proc::mem_info::MemInfo;
+mod ui;
+use ui::memory_panel;
 
 use crate::app::App;
 fn main() {
