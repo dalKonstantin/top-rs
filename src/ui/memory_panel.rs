@@ -1,4 +1,4 @@
-use crate::MemInfo;
+use crate::proc::MemInfo;
 use egui::Ui;
 pub fn show(ui: &mut Ui, mem: &MemInfo) {
     ui.heading("Memory");

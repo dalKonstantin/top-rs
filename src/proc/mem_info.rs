@@ -1,4 +1,5 @@
 use std::fs;
+use tracing::{debug, warn};
 
 #[derive(Default, Debug)]
 pub struct MemInfo {
@@ -14,26 +15,29 @@ impl MemInfo {
         m
     }
     pub fn parse(&mut self) {
-        let content = match fs::read_to_string("/proc/meminfo") {
-            Ok(data) => data,
-            Err(_) => String::new(),
-        };
+        match fs::read_to_string("/proc/meminfo") {
+            Ok(content) => {
+                debug!("Sucessfully read /proc/meminfo");
+                for line in content.lines() {
+                    let mut parts = line.split_whitespace();
+                    let key = parts.next();
+                    let value_str = parts.next();
 
-        for line in content.lines() {
-            let mut parts = line.split_whitespace();
-            let key = parts.next();
-            let value_str = parts.next();
-
-            if let (Some(field), Some(value)) = (key, value_str) {
-                let val_kb = value.parse().unwrap_or(0);
-                match field {
-                    "MemTotal:" => self.total_kb = val_kb,
-                    "MemFree:" => self.free_kb = val_kb,
-                    "MemAvailable:" => self.available_kb = val_kb,
-                    _ => {}
+                    if let (Some(field), Some(value)) = (key, value_str) {
+                        let val_kb = value.parse().unwrap_or(0);
+                        match field {
+                            "MemTotal:" => self.total_kb = val_kb,
+                            "MemFree:" => self.free_kb = val_kb,
+                            "MemAvailable:" => self.available_kb = val_kb,
+                            _ => {}
+                        }
+                    }
                 }
             }
-        }
+            Err(e) => {
+                warn!("Failed to read /proc/meminfo: {}", e)
+            }
+        };
     }
 
     pub fn used_kb(&self) -> u64 {

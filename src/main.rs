@@ -1,13 +1,13 @@
 mod app;
 mod proc;
-use proc::mem_info::MemInfo;
 mod ui;
-use ui::memory_panel;
+use tracing::{debug, info};
 
 use crate::app::App;
 fn main() {
-    let m = MemInfo::new();
-    println!("{:#?}", m);
+    tracing_subscriber::fmt::init();
+
+    info!("Starting rtop!");
     let native_options = eframe::NativeOptions::default();
     let _ = eframe::run_native(
         "rtop",
