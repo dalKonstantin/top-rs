@@ -1,6 +1,6 @@
 use crate::proc::cpu_info::CpuInfo;
 use crate::proc::mem_info::MemInfo;
-use std::time::Instant;
+use std::time::{Duration, Instant};
 
 //#[derive(Default)]
 pub struct App {
@@ -31,5 +31,6 @@ impl eframe::App for App {
         });
 
         crate::ui::draw_main_ui(ctx, &self.mem_info, &self.cpu_info);
+        ctx.request_repaint_after(Duration::from_millis(1000));
     }
 }
