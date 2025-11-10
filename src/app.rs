@@ -1,8 +1,6 @@
-use crate::proc::cpu_info::CpuInfo;
-use crate::proc::mem_info::MemInfo;
+use crate::proc::{CpuInfo, MemInfo};
 use std::time::{Duration, Instant};
 
-//#[derive(Default)]
 pub struct App {
     mem_info: MemInfo,
     cpu_info: CpuInfo,
@@ -10,7 +8,7 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
+    pub fn new(_cc: &eframe::CreationContext<'_>) -> Self {
         Self {
             mem_info: MemInfo::new(),
             cpu_info: CpuInfo::new(),
@@ -20,17 +18,20 @@ impl App {
 }
 
 impl eframe::App for App {
-    fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        let now = Instant::now();
+        if now.duration_since(self.last_upd).as_millis() >= 1000 {
+            self.mem_info.parse();
+            self.cpu_info.parse();
+            self.last_upd = now;
+        }
+
+        use crate::ui;
         egui::CentralPanel::default().show(ctx, |ui| {
-            if self.last_upd.elapsed().as_secs() >= 1 {
-                self.mem_info.parse();
-                self.cpu_info.parse();
-                self.last_upd = Instant::now();
-                ctx.request_repaint();
-            }
+            ui::cpu_panel::show(ui, &self.cpu_info);
+            ui::memory_panel::show(ui, &self.mem_info);
         });
 
-        crate::ui::draw_main_ui(ctx, &self.mem_info, &self.cpu_info);
-        ctx.request_repaint_after(Duration::from_millis(1000));
+        ctx.request_repaint_after(Duration::from_millis(500));
     }
 }
