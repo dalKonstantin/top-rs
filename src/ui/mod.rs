@@ -4,6 +4,7 @@ use egui::Context;
 
 pub mod cpu_panel;
 pub mod memory_panel;
+pub mod processes_table;
 pub fn draw_main_ui(ctx: &Context, mem: &MemInfo, cpu: &CpuInfo) {
     egui::CentralPanel::default().show(ctx, |ui| {
         cpu_panel::show(ui, cpu);
