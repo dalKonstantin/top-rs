@@ -1,3 +1,4 @@
+#![cfg(target_os = "linux")]
 mod app;
 mod proc;
 mod ui;
