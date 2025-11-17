@@ -15,7 +15,7 @@ Lighweight, real-time system monitor inspired by `htop`, built with Rust and egu
 - Rust 1.70+
 
 ## Installation & Run:
-
+```
 git clone git@github.com:dalKonstantin/top-rs.git
 cd top-rs
 
